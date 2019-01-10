@@ -1,3 +1,6 @@
+# Virtual environments
+venv/
+
 # IntelliJ/Pycharm files
 .idea
 
