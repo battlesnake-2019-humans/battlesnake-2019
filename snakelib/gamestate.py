@@ -45,6 +45,8 @@ class GameState:
         state.board = snake_req.board
         state.you = snake_req.you
 
+        return state
+
     def get_map(self):
         """Get a 2D numpy array representing the game board.
         :return np.ndarray Containing MAP_EMPTY, MAP_FOOD or MAP_SNAKE

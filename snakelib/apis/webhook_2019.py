@@ -103,6 +103,8 @@ class SnakeRequest:
         if type(json_dict.get('you')) == dict:
             req.you = Snake.from_json(json_dict['you'])
 
+        return req
+
 
 class MoveResponse:
     def __init__(self, move):
