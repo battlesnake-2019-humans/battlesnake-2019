@@ -13,3 +13,7 @@ def start():
 def move():
     state = GameState.from_snake_request(bottle.request.json)
     return make_move_response(move="left")
+
+
+if __name__ == "__main__":
+    application.run(port=8000)
