@@ -6,6 +6,14 @@ MAP_SNAKE = 1
 MAP_FOOD  = 2
 
 
+def make_start_response(**kwargs):
+    return StartResponse(kwargs["color"]).to_dict()
+
+
+def make_move_response(**kwargs):
+    return MoveResponse(kwargs["move"]).to_dict()
+
+
 class GameState:
     """Main class for tracking game state information. Contains all info on
     snakes, food positions, health, etc.
