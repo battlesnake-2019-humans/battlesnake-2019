@@ -108,11 +108,16 @@ class MoveResponse:
     def __init__(self, move):
         self.move: str = move
 
-        assert move in ['up', 'down', 'left', 'right'], \
+    def to_dict(self):
+        assert self.move in ['up', 'down', 'left', 'right'], \
             "Move must be one of [up, down, left, right]"
+        return {"move": self.move}
 
 
 class StartResponse:
     def __init__(self, color):
         self.color: str = color
-        assert type(color) is str, "Color value must be string"
+
+    def to_dict(self):
+        assert type(self.color) is str, "Color value must be string"
+        return {"color": self.color}
