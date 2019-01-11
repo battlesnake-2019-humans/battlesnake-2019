@@ -3,25 +3,17 @@ import bottle
 import traceback
 from snakelib.gamestate import *
 from snakelib.pathfinding import *
+from snakelib.crashstore import CrashStore
 
-g_crashdumps = {}
+g_crashstore = CrashStore()
 application = bottle.app()
-
-
-def crash_dump(state, trace):
-    global g_crashdumps
-    g_crashdumps[state.game_id].append({
-        "trace": trace,
-        "state": state.dump_state_json()
-    })
-
 
 @application.post("/start")
 def start():
     # Init crash dumps
-    global g_crashdumps
     state = GameState.from_snake_request(bottle.request.json)
-    g_crashdumps[state.game_id] = []
+    global g_crashstore
+    g_crashstore.init_game(state.game_id)
 
     return make_start_response(color="#FF0000")
 
@@ -40,7 +32,8 @@ def move():
 
         return make_move_response(move=next_move)
     except Exception:
-        crash_dump(state, traceback.format_exc())
+        global g_crashstore
+        g_crashstore.log_crash(state, traceback.format_exc())
         raise
 
 
@@ -49,11 +42,9 @@ def end():
     state = GameState.from_snake_request(bottle.request.json)
 
     # If we encountered a crash, dump trace information
-    global g_crashdumps
-    if len(g_crashdumps[state.game_id]) > 0:
-        print("Dump please!")
-        with open("crash_%s.json" % state.game_id, "w") as crash_file:
-            crash_file.write(json.dumps(g_crashdumps[state.game_id]))
+    global g_crashstore
+    if g_crashstore.num_logged_crashes(state.game_id) > 0:
+        g_crashstore.dump_game_to_file(state.game_id, "crash_%s.json" % state.game_id)
 
 
 if __name__ == "__main__":
