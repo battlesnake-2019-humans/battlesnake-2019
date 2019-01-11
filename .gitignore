@@ -1,3 +1,6 @@
+# Crash files
+crash_*.json
+
 # Virtual environments
 venv/
 

@@ -21,7 +21,7 @@ class GameState:
     run Diskstra's algorithm once and store the result for later use.
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.game_id: str = None
         self.turn:    int = None
         self.board: Board = None
@@ -31,11 +31,14 @@ class GameState:
         self._game_map = None
         self._dijkstra_results = {}
 
+        # Hang on to the raw JSON dict in case we need to dump for debugging
+        self._json_raw: dict = kwargs.get("json_raw")
+
     @staticmethod
     def from_snake_request(req_json):
         """Get a game state from a /move request.
         """
-        state = GameState()
+        state = GameState(json_raw=req_json)
 
         snake_req = SnakeRequest.from_json(req_json)
         state.game_id = snake_req.game.id
@@ -85,6 +88,11 @@ class GameState:
                 cx, cy = tx, ty
 
         return (cx, cy), min_score
+
+    def dump_state_json(self):
+        """Dumps the JSON dict the game state was created from (for debugging).
+        """
+        return self._json_raw
 
     def _make_map(self):
         map = np.full((self.board.height, self.board.width), MAP_EMPTY)
