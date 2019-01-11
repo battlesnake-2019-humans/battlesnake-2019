@@ -1,6 +1,7 @@
 import numpy as np
 from heapq import *
-from .gamestate import MAP_SNAKE
+from .constants import *
+from .utils import neighbors_of
 
 
 def dijkstra(map, point):
@@ -45,3 +46,56 @@ def dijkstra(map, point):
         visited[nv_y][nv_x] = True
 
     return d, p
+
+
+def path_to(p, x, y):
+    """Gets the path to a given point from a predecessor matrix.
+    """
+    end_point = p[y][x]
+    points = []
+
+    cur = end_point
+    while True:
+        np_x = cur % np.shape(p)[1]
+        np_y = int(cur / np.shape(p)[1])
+        points.append((np_x, np_y))
+
+        if p[np_y][np_x] == -1:
+            break
+        else:
+            cur = p[np_y][np_x]
+
+    points.reverse()
+    return points
+
+
+def get_moves_from_path(path, lim=-1):
+    """Gets moves [up, down, left, right] for a given set of coordinates.
+    """
+    i = 1
+    for p1x, p1y in path[1:]:
+        p0x, p0y = path[i - 1]
+
+        next_move = None
+        if p0x == p1x:
+            if p0y < p1y:
+                next_move = "up"
+            elif p0y > p1y:
+                next_move = "down"
+        elif p0y == p1y:
+            if p0x < p1x:
+                next_move = "right"
+            elif p0x > p1x:
+                next_move = "left"
+
+        # We must have only moved one space, otherwise something's gone
+        # horribly wrong with the predecessor matrix!
+        assert abs(p1y - p0y) + abs(p0x - p1x) == 1, \
+            "Invalid move (%d, %d) -> (%d, %d)" % (p0x, p0y, p1x, p1y)
+
+        # Stop early if caller provided a move limit
+        if i >= lim >= 0:
+            break
+        i += 1
+
+        yield next_move

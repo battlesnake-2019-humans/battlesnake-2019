@@ -1,9 +1,7 @@
 import numpy as np
+from .constants import *
+from .pathfinding import *
 from .apis.webhook_2019 import *
-
-MAP_EMPTY = 0
-MAP_SNAKE = 1
-MAP_FOOD  = 2
 
 
 def make_start_response(**kwargs):
@@ -19,7 +17,7 @@ class GameState:
     snakes, food positions, health, etc.
 
     For more resource-intensive operations, RAII seems like a good pattern
-    here (Resource Acquisition Is Initialization). i.e. get_dijkstra() will
+    here (Resource Acquisition Is Initialization). i.e. dijkstra_from() will
     run Diskstra's algorithm once and store the result for later use.
     """
 
@@ -54,6 +52,39 @@ class GameState:
         if self._game_map is None:
             self._game_map = self._make_map()
         return self._game_map
+
+    def dijkstra_from(self, px, py):
+        # Check dijkstra cache
+        if (px, py) in self._dijkstra_results:
+            return self._dijkstra_results[(px, py)]
+        else:
+            # Make sure we've populated the game map
+            game_map = self.get_map()
+
+            # Run dijkstra and cache results
+            d, p = dijkstra(game_map, (px, py))
+            self._dijkstra_results[(px, py)] = (d, p)
+            return d, p
+
+    def find_nearest(self, px, py, tile_type: int):
+        d, p = self.dijkstra_from(px, py)
+
+        # Find tiles with a given type (i.e. food tiles)
+        game_map = self.get_map()
+        tile_coords = np.where(game_map == tile_type)
+
+        # If no coords returned, we can't find any tiles of the given type
+        if np.shape(tile_coords)[1] == 0:
+            return None
+
+        # Find closest tile using d matrix
+        min_score, cx, cy = np.inf, -1, -1
+        for tx, ty in np.nditer(tile_coords):
+            if d[ty][tx] < min_score:
+                min_score = d[ty][tx]
+                cx, cy = tx, ty
+
+        return (cx, cy), min_score
 
     def _make_map(self):
         map = np.full((self.board.height, self.board.width), MAP_EMPTY)
