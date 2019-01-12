@@ -1,6 +1,5 @@
-import json
+import sys
 import bottle
-import traceback
 from snakelib.gamestate import *
 from snakelib.pathfinding import *
 from snakelib.crashstore import CrashStore
@@ -23,6 +22,8 @@ def move():
     state = GameState.from_snake_request(bottle.request.json)
 
     try:
+        raise Exception("Oh dayum!")
+
         head_x, head_y = state.you.head()
         p = state.dijkstra_from(head_x, head_y)[1]
 
@@ -33,7 +34,7 @@ def move():
         return make_move_response(move=next_move)
     except Exception:
         global g_crashstore
-        g_crashstore.log_crash(state, traceback.format_exc())
+        g_crashstore.log_crash(state, sys.exc_info()[2])
         raise
 
 

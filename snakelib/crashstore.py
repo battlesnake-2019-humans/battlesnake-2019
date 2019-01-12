@@ -1,4 +1,8 @@
+import binascii
+import sys
 import json
+import pickle
+import traceback
 from .gamestate import GameState
 
 
@@ -20,13 +24,15 @@ class CrashStore:
         """Initializes the crash store for a new game."""
         self._store[game_id] = []
 
-    def log_crash(self, state: GameState, trace: str):
+    def log_crash(self, state: GameState, tb):
         """Logs a crash (exception) during a game."""
         if state.game_id not in self._store:
             raise Exception("Game %s not initialized in crash store")
 
+        tb_str = traceback.format_tb(tb)
+
         self._store[state.game_id].append({
-            "trace": trace,
+            "trace": tb_str,
             "state": state.dump_state_json()
         })
 
