@@ -3,11 +3,14 @@ import json
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 from snakelib.gamestate import GameState
+
+COLORS_FILE = Path(__file__).absolute().parent / "colors.csv"
 
 
 def read_colors():
-    with open("colors.csv", 'r') as colorsfile:
+    with open(COLORS_FILE, 'r') as colorsfile:
         reader = csv.reader(colorsfile)
         return [row[1] for row in reader]
 

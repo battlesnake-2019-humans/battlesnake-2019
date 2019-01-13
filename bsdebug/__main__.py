@@ -1,27 +1,11 @@
-import pickle
 import sys
-import json
-from snakelib.gamestate import GameState
 
-from .board import BoardGraph
+from .showboard import showboard
 
 
-def unpickle_traceback(tb_str):
-    """Traceback object is pickled and stored as Base64 in json."""
-    tb_pickled = tb_str.encode("ASCII")
-    return pickle.loads(tb_pickled)
+cmd_string = sys.argv[1] if len(sys.argv) > 1 else "showboard"
 
-
-with open(sys.argv[1]) as crash_file:
-    crash_data = json.load(crash_file)
-
-# Use 0th crash for now. Add support for more tracebacks later...
-crash = crash_data[0]
-
-# TODO: use tblib to serialize/unserialize tracebacks?
-trace = crash["trace"]
-print(trace)
-
-state = GameState.from_snake_request(crash["state"])
-graph = BoardGraph(state)
-graph.show()
+if cmd_string == "showboard":
+    showboard(sys.argv[1:])
+else:
+    print("Unrecognized command")
