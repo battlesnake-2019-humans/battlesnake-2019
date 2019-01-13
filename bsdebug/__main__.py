@@ -1,7 +1,9 @@
-
 import pickle
 import sys
 import json
+from snakelib.gamestate import GameState
+
+from .board import BoardGraph
 
 
 def unpickle_traceback(tb_str):
@@ -19,3 +21,7 @@ crash = crash_data[0]
 # TODO: use tblib to serialize/unserialize tracebacks?
 trace = crash["trace"]
 print(trace)
+
+state = GameState.from_snake_request(crash["state"])
+graph = BoardGraph(state)
+graph.show()
