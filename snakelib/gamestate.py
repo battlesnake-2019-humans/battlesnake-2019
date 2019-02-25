@@ -2,6 +2,7 @@ import numpy as np
 from .constants import *
 from .pathfinding import *
 from .apis.webhook_2019 import *
+from .utils import *
 
 
 def make_start_response(**kwargs):
@@ -55,6 +56,28 @@ class GameState:
         if self._game_map is None:
             self._game_map = self._make_map()
         return self._game_map
+
+    def get_map_3headed(self):
+        """Gets the "3 headed" board state - ANY possible move a snake can make
+        will be marked as MAP_SNAKE.
+
+        :return np.ndarray
+        """
+        game_map = np.ndarray((self.board.height, self.board.width), dtype=np.uint8)
+        for snake in self.board.snakes:
+            # Ignore self
+            if snake.id == self.you.id:
+                continue
+
+            # Mark each snake's body (tail can be excluded since we're assuming a move)
+            # TODO: What happens if the snake is still growing?
+            for x, y in snake.body[:-1]:
+                game_map[y][x] = MAP_SNAKE
+
+            for x, y in get_possible_snake_moves(snake, game_map):
+                game_map[y][x] = MAP_SNAKE
+
+        return game_map
 
     def dijkstra_from(self, px, py):
         # Check dijkstra cache

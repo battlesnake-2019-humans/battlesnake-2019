@@ -20,3 +20,14 @@ def neighbors_of(x, y, map):
         yield x - 1, y
     if y - 1 >= 0 and map[y-1][x] != MAP_SNAKE:
         yield x, y - 1
+
+
+def get_possible_snake_moves(snake, map):
+    # Find all possible moves a snake can make
+    head = snake.head()
+    adjacent_tiles = list(neighbors_of(head[0], head[1], map))
+
+    if len(snake.body) > 1:
+        adjacent_tiles.remove(snake.body[1])  # Assuming snake won't kill itself!
+
+    return adjacent_tiles

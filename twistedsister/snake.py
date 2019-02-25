@@ -13,6 +13,9 @@ def start():
 @application.post("/move")
 def move():
     state = GameState.from_snake_request(request.json)
+
+    map_3headed = state.get_map_3headed()
+
     return make_move_response(move="left")
 
 
