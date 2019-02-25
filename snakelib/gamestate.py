@@ -65,17 +65,16 @@ class GameState:
         """
         game_map = np.ndarray((self.board.height, self.board.width), dtype=np.uint8)
         for snake in self.board.snakes:
-            # Ignore self
-            if snake.id == self.you.id:
-                continue
 
             # Mark each snake's body (tail can be excluded since we're assuming a move)
             # TODO: What happens if the snake is still growing?
             for x, y in snake.body[:-1]:
                 game_map[y][x] = MAP_SNAKE
 
-            for x, y in get_possible_snake_moves(snake, game_map):
-                game_map[y][x] = MAP_SNAKE
+            # Only mark potential moves for enemy snakes
+            if snake.id != self.you.id:
+                for x, y in get_possible_snake_moves(snake, game_map):
+                    game_map[y][x] = MAP_SNAKE
 
         return game_map
 
@@ -88,9 +87,9 @@ class GameState:
             game_map = self.get_map()
 
             # Run dijkstra and cache results
-            d, p = dijkstra(game_map, (px, py))
-            self._dijkstra_results[(px, py)] = (d, p)
-            return d, p
+            result = dijkstra(game_map, (px, py))
+            self._dijkstra_results[(px, py)] = result
+            return result
 
     def find_nearest(self, px, py, tile_type: int):
         d, p = self.dijkstra_from(px, py)
