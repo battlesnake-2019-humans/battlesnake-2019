@@ -1,19 +1,21 @@
 from bottle import default_app, request
 from snakelib.gamestate import *
+from snakelib.crashstore import CrashStore
 
 application = default_app()
+crashstore = CrashStore()
 
 
 @application.post("/start")
-def start():
-    state = GameState.from_snake_request(request.json)
+@crashstore.game_start
+def start(state):
     return make_start_response(color="#FF0000")
 
 
 @application.post("/move")
-def move():
-    state = GameState.from_snake_request(request.json)
-
+@crashstore.game_move
+def move(state):
+    raise Exception("AAAAAAHHHHHH!!!!!")
     map_3headed = state.get_map_3headed()
     result = dijkstra(map_3headed, state.you.head())
 
@@ -21,7 +23,8 @@ def move():
 
 
 @application.post("/end")
-def end():
+@crashstore.game_end
+def end(state):
     pass
 
 
