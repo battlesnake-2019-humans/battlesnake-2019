@@ -15,7 +15,6 @@ def start(state):
 @application.post("/move")
 @crashstore.game_move
 def move(state):
-    raise Exception("AAAAAAHHHHHH!!!!!")
     map_3headed = state.get_map_3headed()
     result = dijkstra(map_3headed, state.you.head())
 
