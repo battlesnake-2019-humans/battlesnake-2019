@@ -48,6 +48,16 @@ class Snake:
         if getattr(self, 'body'):
             return self.body[0]
 
+    def length(self):
+        length = 1
+        lastbody = self.body[0]
+        for coords in self.body:
+            if coords.x != lastbody.x and coords.y != lastbody.y:
+                length += 1
+            lastbody = coords
+
+        return length
+
 
 class Board:
     def __init__(self, **kwargs):

@@ -1,7 +1,7 @@
 import numpy as np
 from heapq import *
 from .constants import *
-from .utils import neighbors_of
+from .utils import neighbors_of, get_next_snake_move
 
 
 class DijkstraResult:
@@ -40,17 +40,7 @@ class DijkstraResult:
         for p1x, p1y in path[1:]:
             p0x, p0y = path[i - 1]
 
-            next_move = None
-            if p0x == p1x:
-                if p0y > p1y:
-                    next_move = "up"
-                elif p0y < p1y:
-                    next_move = "down"
-            elif p0y == p1y:
-                if p0x < p1x:
-                    next_move = "right"
-                elif p0x > p1x:
-                    next_move = "left"
+            next_move = get_next_snake_move(p0x, p0y, p1x, p1y)
 
             # We must have only moved one space, otherwise something's gone
             # horribly wrong with the predecessor matrix!
