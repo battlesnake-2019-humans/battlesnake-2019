@@ -28,7 +28,7 @@ class CrashStore:
     def log_crash(self, state: GameState, tb):
         """Logs a crash (exception) during a game."""
         if state.game_id not in self._store:
-            raise Exception("Game %s not initialized in crash store")
+            return
 
         tb_str = traceback.format_tb(tb)
 
@@ -39,10 +39,14 @@ class CrashStore:
 
     def num_logged_crashes(self, game_id: str):
         """Get the number of crashes logged for a given game."""
+        if game_id not in self._store:
+            return
         return len(self._store[game_id])
 
     def dump_game_to_file(self, game_id: str, filename: str):
         """Dumps all logged crashes for a given game to a file."""
+        if game_id not in self._store:
+            return
         with open(filename, 'w') as dumpfile:
             dumpfile.write(json.dumps(self._store[game_id]))
 
