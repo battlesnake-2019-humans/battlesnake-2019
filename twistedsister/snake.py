@@ -29,7 +29,11 @@ def move(state):
         # Get dijkstra scores for all snakes
         snake_scores = get_snake_scores(state, state.board.snakes)
 
-        best_food = state.board.food[0]
+        if len(state.board.food[0]) > 0:
+            best_food = state.board.food[0]
+
+        #TODO: look for best open space
+
         farthest_dist = 0
         for food in state.board.food:
             min_dist = state.board.width * state.board.height
