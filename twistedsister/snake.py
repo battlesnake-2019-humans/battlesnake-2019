@@ -33,8 +33,6 @@ def move(state):
         if len(state.board.food) > 0:
             best_food = state.board.food[0]
 
-        #TODO: look for best open space
-
         farthest_dist = 0
         for food in state.board.food:
             min_dist = state.board.width * state.board.height
@@ -53,9 +51,9 @@ def move(state):
 
         # Find path to best food
         my_score = snake_scores[state.you.id]
-        moves = list(my_score.get_moves_to(best_food.x, best_food.y))
+        moves = my_score.get_moves_to(best_food.x, best_food.y)
 
-        return make_move_response(move=moves[0])
+        return make_move_response(move=next(moves))
     else:
         # Voronoi strategy: maximize your control space of the board!
         # Get dijkstra scores for all snakes

@@ -28,7 +28,6 @@ class DijkstraResult:
                 cur = self.p[np_y][np_x]
 
         points.reverse()
-        points.append((x, y))  # include target point in path
         return points
 
     def get_moves_to(self, x, y, lim=-1):
