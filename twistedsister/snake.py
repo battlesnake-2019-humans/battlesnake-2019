@@ -1,3 +1,4 @@
+import random
 from bottle import default_app, request
 from snakelib.gamestate import *
 from snakelib.crashstore import CrashStore
@@ -28,10 +29,13 @@ def move(state):
         # EARLY GAME STRATEGY: stay far away from other snakes!
 
         # Get dijkstra scores for all snakes
-        snake_scores = get_snake_scores(state.get_map_3headed(), state.board.snakes)
+        snake_scores = get_snake_scores(state.get_map(), state.board.snakes)
 
         if len(state.board.food) > 0:
             best_food = state.board.food[0]
+        else:
+            # No food available. Choose random
+            return make_move_response(move=random.choice(get_possible_snake_moves(state.you, state.get_map())))
 
         farthest_dist = 0
         for food in state.board.food:
