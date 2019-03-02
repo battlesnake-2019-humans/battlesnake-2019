@@ -52,5 +52,10 @@ def end(state):
     pass
 
 
+@application.post("/ping")
+def ping():
+    pass
+
+
 if __name__ == "__main__":
     application.run(port=8080)
