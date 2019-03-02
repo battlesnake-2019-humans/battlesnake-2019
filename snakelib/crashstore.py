@@ -58,7 +58,8 @@ class CrashStore:
             state = GameState.from_snake_request(bottle.request.json)
             try:
                 return func(state)
-            except Exception:
+            except Exception as e:
+                print(e)
                 self.log_crash(state, sys.exc_info()[2])
                 raise
         return move_wrapper

@@ -28,6 +28,7 @@ class DijkstraResult:
                 cur = self.p[np_y][np_x]
 
         points.reverse()
+        points.append((x, y))  # include target point in path
         return points
 
     def get_moves_to(self, x, y, lim=-1):
@@ -41,9 +42,9 @@ class DijkstraResult:
 
             next_move = None
             if p0x == p1x:
-                if p0y < p1y:
+                if p0y > p1y:
                     next_move = "up"
-                elif p0y > p1y:
+                elif p0y < p1y:
                     next_move = "down"
             elif p0y == p1y:
                 if p0x < p1x:

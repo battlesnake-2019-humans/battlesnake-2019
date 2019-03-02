@@ -16,6 +16,7 @@ def start(state):
 @crashstore.game_move
 def move(state):
     map_3headed = state.get_map_3headed()
+
     result = dijkstra(map_3headed, state.you.head())
 
     return make_move_response(move="left")

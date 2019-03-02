@@ -92,11 +92,12 @@ class GameState:
             return result
 
     def find_nearest(self, px, py, tile_type: int):
-        d, p = self.dijkstra_from(px, py)
+        result = self.dijkstra_from(px, py)
+        d, p = result.d, result.p
 
         # Find tiles with a given type (i.e. food tiles)
         game_map = self.get_map()
-        tile_coords = np.where(game_map == tile_type)
+        tile_coords = np.argwhere(game_map == tile_type)
 
         # If no coords returned, we can't find any tiles of the given type
         if np.shape(tile_coords)[1] == 0:
@@ -104,7 +105,8 @@ class GameState:
 
         # Find closest tile using d matrix
         min_score, cx, cy = np.inf, -1, -1
-        for tx, ty in np.nditer(tile_coords):
+        for i in range(np.shape(tile_coords)[0]):
+            ty, tx = tile_coords[i]
             if d[ty][tx] < min_score:
                 min_score = d[ty][tx]
                 cx, cy = tx, ty
