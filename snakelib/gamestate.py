@@ -63,7 +63,7 @@ class GameState:
 
         :return np.ndarray
         """
-        game_map = np.ndarray((self.board.height, self.board.width), dtype=np.uint8)
+        game_map = np.zeros((self.board.height, self.board.width), dtype=np.uint8)
         for snake in self.board.snakes:
 
             # Mark each snake's body (tail can be excluded since we're assuming a move)
@@ -75,6 +75,9 @@ class GameState:
             if snake.id != self.you.id:
                 for x, y in get_possible_snake_moves(snake, game_map):
                     game_map[y][x] = MAP_SNAKE
+
+        for fx, fy in self.board.food:
+            game_map[fy][fx] = MAP_FOOD
 
         return game_map
 

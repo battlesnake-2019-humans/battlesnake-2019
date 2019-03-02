@@ -27,8 +27,9 @@ def get_possible_snake_moves(snake, map):
     head = snake.head()
     adjacent_tiles = list(neighbors_of(head[0], head[1], map))
 
-    if snake.length() > 1:
-        adjacent_tiles.remove(snake.body[1])  # Assuming snake won't kill itself!
+    for x, y in adjacent_tiles:
+        if map[y][x] == MAP_SNAKE:
+            adjacent_tiles.remove((x, y))
 
     return adjacent_tiles
 

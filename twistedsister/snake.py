@@ -1,15 +1,16 @@
 from bottle import default_app, request
 from snakelib.gamestate import *
 from snakelib.crashstore import CrashStore
+from snakelib.pathfinding import dijkstra
 
 application = default_app()
 crashstore = CrashStore()
 
 
-def get_snake_scores(state, snakes):
+def get_snake_scores(map, snakes):
     snake_scores = {}
     for snake in snakes:
-        snake_scores[snake.id] = state.dijkstra_from(snake.head().x, snake.head().y)
+        snake_scores[snake.id] = dijkstra(map, snake.head())
 
     return snake_scores
 
@@ -27,9 +28,9 @@ def move(state):
         # EARLY GAME STRATEGY: stay far away from other snakes!
 
         # Get dijkstra scores for all snakes
-        snake_scores = get_snake_scores(state, state.board.snakes)
+        snake_scores = get_snake_scores(state.get_map_3headed(), state.board.snakes)
 
-        if len(state.board.food[0]) > 0:
+        if len(state.board.food) > 0:
             best_food = state.board.food[0]
 
         #TODO: look for best open space
@@ -58,7 +59,7 @@ def move(state):
     else:
         # Voronoi strategy: maximize your control space of the board!
         # Get dijkstra scores for all snakes
-        snake_scores = get_snake_scores(state, state.board.snakes)
+        snake_scores = get_snake_scores(state.get_map(), state.board.snakes)
 
         best_move = None
         best_control_space = 0
@@ -75,7 +76,7 @@ def move(state):
                             continue  # skip self: only looking at opposing snakes!
 
                         if snake_scores[snake.id].d[y][x] < min_opposing_score:
-                            min_opposing_score = snake_scores[snake.id][y][x]
+                            min_opposing_score = snake_scores[snake.id].d[y][x]
 
                     # If we are closer than the minimum opposing snake distance, then we CONTROL
                     # this space
