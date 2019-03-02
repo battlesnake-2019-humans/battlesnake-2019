@@ -71,8 +71,9 @@ class CrashStore:
     def game_end(self, func):
         def end_wrapper():
             state = GameState.from_snake_request(bottle.request.json)
-            if self.num_logged_crashes(state.game_id) > 0:
-                self.dump_game_to_file(state.game_id, "crash_%s.json" % state.game_id)
+            if state.game_id in self._store:
+                if self.num_logged_crashes(state.game_id) > 0:
+                    self.dump_game_to_file(state.game_id, "crash_%s.json" % state.game_id)
 
             return func(state)
         return end_wrapper
