@@ -67,6 +67,7 @@ def move(state):
         best_control_space = 0
         for move in get_possible_snake_moves(state.you, state.get_map()):
             control_space = 0
+            move_dijkstra = dijkstra(state.get_map(), move)
             for y in range(state.board.height):
                 for x in range(state.board.width):
                     min_opposing_score = state.board.width * state.board.height
@@ -82,7 +83,7 @@ def move(state):
 
                     # If we are closer than the minimum opposing snake distance, then we CONTROL
                     # this space
-                    if snake_scores[state.you.id].d[y][x] < min_opposing_score:
+                    if move_dijkstra.d[y][x] < min_opposing_score:
                         control_space += 1
 
             if control_space > best_control_space:
